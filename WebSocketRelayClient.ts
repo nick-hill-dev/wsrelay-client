@@ -71,7 +71,7 @@
             if (line.length == 0) return;
             console.log('[WebSocket:Message] ' + line);
             var spaceIndex = line.indexOf(' ');
-            var protocolPart = spaceIndex >= 0 ? line.substring(0, spaceIndex - 1) : line;
+            var protocolPart = spaceIndex >= 0 ? line.substring(0, spaceIndex) : line;
             var symbol = protocolPart.length > 0 ? protocolPart[0] : '';
             var messagePart = spaceIndex >= 0 ? line.substring(spaceIndex + 1) : '';
             switch (symbol) {
