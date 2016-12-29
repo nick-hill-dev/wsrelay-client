@@ -43,6 +43,10 @@
             this.webSocket.send('* ' + message);
         }
 
+        public sendToRealm(realmNumber: number, message: string) {
+            this.webSocket.send(':' + realmNumber + ' ' + message);
+        }
+
         public disconnect() {
             if (this.webSocket !== null) {
                 this.webSocket.close();
