@@ -47,6 +47,14 @@
             this.webSocket.send(':' + realmNumber + ' ' + message);
         }
 
+        public saveData(name: string, data: string) {
+            this.webSocket.send('>' + name.replace(' ', '_') + ' ' + data);
+        }
+
+        public loadData(name: string) {
+            this.webSocket.send('<' + name.replace(' ', '_'));
+        }
+
         public disconnect() {
             if (this.webSocket !== null) {
                 this.webSocket.close();
@@ -117,15 +125,20 @@
                     break;
 
                 case '@':
-                    this.handler.handleMessageToMe(this, parseInt(protocolPart.substring(1)), messagePart);
+                    this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.me, messagePart);
                     break;
 
                 case '!':
-                    this.handler.handleMessageToAll(this, parseInt(protocolPart.substring(1)), false, messagePart);
+                    this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.allExceptSender, messagePart);
                     break;
 
                 case '*':
-                    this.handler.handleMessageToAll(this, parseInt(protocolPart.substring(1)), true, messagePart);
+                    this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.all, messagePart);
+                    break;
+
+                case '<':
+                    var name = protocolPart.substring(1);
+                    this.handler.handleData(this, name, messagePart);
                     break;
             }
         }

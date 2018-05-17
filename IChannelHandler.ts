@@ -16,9 +16,9 @@
 
         childRealmDestroyed(client: WebSocketRelayClient, realmNumber: number);
 
-        handleMessageToAll(client: WebSocketRelayClient, senderUserNumber: number, includeSender: boolean, message: string);
+        handleMessage(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, message: string);
 
-        handleMessageToMe(client: WebSocketRelayClient, senderUserNumber: number, message: string);
+        handleData(client: WebSocketRelayClient, name: string, data: string);
 
     }
 
