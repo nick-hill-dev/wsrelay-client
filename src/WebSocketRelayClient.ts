@@ -112,7 +112,6 @@
                     break;
 
                 case '-':
-                    var parts = protocolPart.substring(1).split(',');
                     this.handler.userLeft(this, parseInt(protocolPart.substring(1)));
                     break;
 

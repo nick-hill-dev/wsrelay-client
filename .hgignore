@@ -10,3 +10,4 @@ bin
 .vs
 *.map
 *.js
+wsrelayclient.d.ts

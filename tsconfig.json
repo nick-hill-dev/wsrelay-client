@@ -1,0 +1,18 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es5",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "module": "system",
+    "removeComments": false,
+    "outFile": "wsrelayclient.js",
+    "noEmitOnError": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "exclude": [
+    "wsrelayclient.d.ts"
+  ]
+}
