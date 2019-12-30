@@ -6,13 +6,14 @@
     "noUnusedLocals": true,
     "module": "system",
     "removeComments": false,
-    "outFile": "wsrelayclient.js",
+    "sourceRoot": "./src/",
+    "rootDir": "./src/",
+    "outDir": "./bin/",
+    "outFile": "./bin/wsRelayClient.js",
     "noEmitOnError": true,
     "composite": true,
     "declaration": true,
-    "declarationMap": true
-  },
-  "exclude": [
-    "wsrelayclient.d.ts"
-  ]
+    "declarationMap": true,
+    "sourceMap": true
+  }
 }
