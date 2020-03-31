@@ -79,7 +79,6 @@
             console.groupCollapsed('[WebSocket:Error]');
             console.dir(e);
             console.groupEnd();
-            this.handler.channelStatus(this, ChannelStatus.offline);
         }
 
         private handleSocketMessage = (e: MessageEvent) => {
