@@ -2,23 +2,23 @@
 
     export interface IChannelHandler {
 
-        channelStatus(client: WebSocketRelayClient, online: boolean);
+        channelStatus(client: WebSocketRelayClient, status: ChannelStatus): void;
 
-        assignUserNumber(client: WebSocketRelayClient, userNumber: number);
+        assignUserNumber?(client: WebSocketRelayClient, userNumber: number): void;
 
-        assignRealmNumber(client: WebSocketRelayClient, realmNumber: number);
+        assignRealmNumber?(client: WebSocketRelayClient, realmNumber: number): void;
 
-        usersJoined(client: WebSocketRelayClient, userNumbers: Array<number>, joinedBeforeYou: boolean);
+        usersJoined?(client: WebSocketRelayClient, userNumbers: Array<number>, joinedBeforeYou: boolean): void;
 
-        userLeft(client: WebSocketRelayClient, userNumber: number);
+        userLeft?(client: WebSocketRelayClient, userNumber: number): void;
 
-        childRealmCreated(client: WebSocketRelayClient, realmNumber: number);
+        childRealmCreated?(client: WebSocketRelayClient, realmNumber: number): void;
 
-        childRealmDestroyed(client: WebSocketRelayClient, realmNumber: number);
+        childRealmDestroyed?(client: WebSocketRelayClient, realmNumber: number): void;
 
-        handleMessage(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, message: string);
+        handleMessage?(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, message: string): void;
 
-        handleData(client: WebSocketRelayClient, name: string, data: string);
+        handleData?(client: WebSocketRelayClient, name: string, data: string): void;
 
     }
 

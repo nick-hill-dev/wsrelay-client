@@ -9,22 +9,22 @@
         public constructor(address: string, protocol: string, handler: IChannelHandler) {
             this.handler = handler;
             this.webSocket = new WebSocket(address, protocol);
-            this.webSocket.onopen = (e: Event) => this.handleSocketOpen(e);
-            this.webSocket.onclose = (e: CloseEvent) => this.handleSocketClose(e);
-            this.webSocket.onmessage = (e: MessageEvent) => this.handleSocketMessage(e);
-            this.webSocket.onerror = (e: Event) => this.handleSocketError(e);
+            this.webSocket.onopen = this.handleSocketOpen;
+            this.webSocket.onclose = this.handleSocketClose;
+            this.webSocket.onmessage = this.handleSocketMessage;
+            this.webSocket.onerror = this.handleSocketError;
         }
 
-        public joinRealm(realmNumber: number, createChildRealm: boolean) {
-            if (createChildRealm) {
+        public joinRealm(realmNumber: number, type: RealmType) {
+            if (type == RealmType.childRealm) {
                 this.webSocket.send('&' + realmNumber);
             } else {
                 this.webSocket.send('^' + realmNumber);
             }
         }
 
-        public createRealm(createChildRealm: boolean) {
-            if (createChildRealm) {
+        public createRealm(type: RealmType) {
+            if (type == RealmType.childRealm) {
                 this.webSocket.send('&');
             } else {
                 this.webSocket.send('^');
@@ -62,23 +62,23 @@
             }
         }
 
-        private handleSocketOpen(e: Event) {
+        private handleSocketOpen = (e: Event) => {
             console.log('[WebSocket:Open]');
-            this.handler.channelStatus(this, true);
+            this.handler.channelStatus(this, ChannelStatus.online);
         }
 
-        private handleSocketClose(e: CloseEvent) {
+        private handleSocketClose = (e: CloseEvent) => {
             console.log('[WebSocket:Close] ' + e.code + ': "' + e.reason + '"');
-            this.handler.channelStatus(this, false);
+            this.handler.channelStatus(this, ChannelStatus.offline);
             this.webSocket = null;
         }
 
-        private handleSocketError(e: Event) {
+        private handleSocketError = (e: Event) => {
             console.log('[WebSocket:Error]');
-            this.handler.channelStatus(this, false);
+            this.handler.channelStatus(this, ChannelStatus.offline);
         }
 
-        private handleSocketMessage(e: MessageEvent) {
+        private handleSocketMessage = (e: MessageEvent) => {
             var line = <string>e.data;
             if (line.length == 0) return;
             console.log('[WebSocket:Message] ' + line);
@@ -89,55 +89,77 @@
             switch (symbol) {
 
                 case '#':
-                    this.handler.assignUserNumber(this, parseInt(protocolPart.substring(1)));
+                    if (this.handler.assignUserNumber !== undefined) {
+                        this.handler.assignUserNumber(this, parseInt(protocolPart.substring(1)));
+                    }
                     break;
 
                 case '^':
                 case '&':
-                    this.handler.assignRealmNumber(this, parseInt(protocolPart.substring(1)));
+                    if (this.handler.assignRealmNumber !== undefined) {
+                        this.handler.assignRealmNumber(this, parseInt(protocolPart.substring(1)));
+                    }
                     break;
 
                 case '=':
-                    if (protocolPart.length > 1) {
-                        var userNumbers: Array<number> = [];
-                        for (var userNumberString of protocolPart.substring(1).split(',')) {
-                            userNumbers.push(parseInt(userNumberString));
+                    if (this.handler.usersJoined !== undefined) {
+                        if (protocolPart.length > 1) {
+                            var userNumbers: Array<number> = [];
+                            for (var userNumberString of protocolPart.substring(1).split(',')) {
+                                userNumbers.push(parseInt(userNumberString));
+                            }
+                            this.handler.usersJoined(this, userNumbers, true);
                         }
-                        this.handler.usersJoined(this, userNumbers, true);
                     }
                     break;
 
                 case '+':
-                    this.handler.usersJoined(this, [parseInt(protocolPart.substring(1))], false);
+                    if (this.handler.usersJoined !== undefined) {
+                        this.handler.usersJoined(this, [parseInt(protocolPart.substring(1))], false);
+                    }
                     break;
 
                 case '-':
-                    this.handler.userLeft(this, parseInt(protocolPart.substring(1)));
+                    if (this.handler.userLeft !== undefined) {
+                        this.handler.userLeft(this, parseInt(protocolPart.substring(1)));
+                    }
                     break;
 
                 case '{':
-                    this.handler.childRealmCreated(this, parseInt(protocolPart.substring(1)));
+                    if (this.handler.childRealmCreated !== undefined) {
+                        this.handler.childRealmCreated(this, parseInt(protocolPart.substring(1)));
+                    }
                     break;
 
                 case '}':
-                    this.handler.childRealmDestroyed(this, parseInt(protocolPart.substring(1)));
+                    if (this.handler.childRealmDestroyed !== undefined) {
+                        this.handler.childRealmDestroyed(this, parseInt(protocolPart.substring(1)));
+                    }
                     break;
 
                 case '@':
-                    this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.me, messagePart);
+                    if (this.handler.handleMessage !== undefined) {
+                        this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.me, messagePart);
+                    }
                     break;
 
                 case '!':
-                    this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.allExceptSender, messagePart);
+                    if (this.handler.handleMessage !== undefined) {
+                        this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.allExceptSender, messagePart);
+                    }
                     break;
 
                 case '*':
-                    this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.all, messagePart);
+                    if (this.handler.handleMessage !== undefined) {
+                        this.handler.handleMessage(this, parseInt(protocolPart.substring(1)), MessageTarget.all, messagePart);
+                    }
                     break;
 
                 case '<':
-                    var name = protocolPart.substring(1);
-                    this.handler.handleData(this, name, messagePart);
+                    if (this.handler.handleData !== undefined) {
+                        var name = protocolPart.substring(1);
+                        this.handler.handleData(this, name, messagePart);
+                    }
                     break;
             }
         }

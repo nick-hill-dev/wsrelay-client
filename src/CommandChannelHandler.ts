@@ -2,28 +2,30 @@
 
     export abstract class CommandChannelHandler implements IChannelHandler {
 
-        abstract channelStatus(client: WebSocketRelayClient, online: boolean);
+        abstract channelStatus(client: WebSocketRelayClient, status: ChannelStatus): void;
 
-        abstract assignUserNumber(client: WebSocketRelayClient, userNumber: number);
+        abstract assignUserNumber?(client: WebSocketRelayClient, userNumber: number): void;
 
-        abstract assignRealmNumber(client: WebSocketRelayClient, realmNumber: number);
+        abstract assignRealmNumber?(client: WebSocketRelayClient, realmNumber: number): void;
 
-        abstract usersJoined(client: WebSocketRelayClient, userNumbers: Array<number>, joinedBeforeYou: boolean);
+        abstract usersJoined?(client: WebSocketRelayClient, userNumbers: Array<number>, joinedBeforeYou: boolean): void;
 
-        abstract userLeft(client: WebSocketRelayClient, userNumber: number);
+        abstract userLeft?(client: WebSocketRelayClient, userNumber: number): void;
 
-        abstract childRealmCreated(client: WebSocketRelayClient, realmNumber: number);
+        abstract childRealmCreated?(client: WebSocketRelayClient, realmNumber: number): void;
 
-        abstract childRealmDestroyed(client: WebSocketRelayClient, realmNumber: number);
+        abstract childRealmDestroyed?(client: WebSocketRelayClient, realmNumber: number): void;
 
-        abstract handleCommand(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, command: string, parameters: string[]);
+        abstract handleCommand?(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, command: string, parameters: string[]): void;
 
         public handleMessage(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, message: string) {
             var parts = CommandChannelHandler.decode(message);
-            this.handleCommand(client, senderUserNumber, target, parts[0], parts.slice(1));
+            if (this.handleCommand !== undefined) {
+                this.handleCommand(client, senderUserNumber, target, parts[0], parts.slice(1));
+            }
         }
 
-        abstract handleData(client: WebSocketRelayClient, name: string, data: string);
+        abstract handleData?(client: WebSocketRelayClient, name: string, data: string): void;
 
         public static encode(...parts: Object[]): string {
             var result = '';
@@ -34,7 +36,11 @@
                 if (part.indexOf(' ') != -1 || part == '') {
                     fixedPart = '"' + part + '"';
                 }
-                if (first) { first = false; } else { result += ' '; }
+                if (first) {
+                    first = false;
+                } else {
+                    result += ' ';
+                }
                 result += fixedPart;
             }
             return result;
@@ -43,7 +49,9 @@
         public static decode(line: string): string[] {
 
             // A blank line contains no data at all
-            if (line === '') return [];
+            if (line === '') {
+                return [];
+            }
 
             // Initialise some variables for the DFA-based state machine
             var result = [];
@@ -58,19 +66,21 @@
                         if (line[i] == ' ') {
                             result.push(currentPart);
                             currentPart = null;
-                        }
-                        else if (line[i] == '"') {
+                        } else if (line[i] == '"') {
                             if (currentPart === null) currentPart = '';
                             lexerState = 1;
-                        }
-                        else {
+                        } else {
                             if (currentPart === null) currentPart = '';
                             currentPart += line[i];
                         }
                         break;
                     case 1:
                         // Lexer state 1 is the quote-enclosed string state
-                        if (line[i] == '"') { lexerState = 0; } else { currentPart += line[i]; }
+                        if (line[i] == '"') {
+                            lexerState = 0;
+                        } else {
+                            currentPart += line[i];
+                        }
                         break;
                 }
             }
