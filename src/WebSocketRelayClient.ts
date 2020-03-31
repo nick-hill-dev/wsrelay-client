@@ -68,13 +68,17 @@
         }
 
         private handleSocketClose = (e: CloseEvent) => {
-            console.log('[WebSocket:Close] ' + e.code + ': "' + e.reason + '"');
+            console.groupCollapsed('[WebSocket:Close] ' + e.code + ': "' + e.reason + '"');
+            console.dir(e);
+            console.groupEnd();
             this.handler.channelStatus(this, ChannelStatus.offline);
             this.webSocket = null;
         }
 
         private handleSocketError = (e: Event) => {
-            console.log('[WebSocket:Error]');
+            console.groupCollapsed('[WebSocket:Error]');
+            console.dir(e);
+            console.groupEnd();
             this.handler.channelStatus(this, ChannelStatus.offline);
         }
 
