@@ -48,11 +48,16 @@
         }
 
         public saveData(name: string, data: string) {
-            this.webSocket.send('>' + name.replace(' ', '_') + ' ' + data);
+            this.webSocket.send('>' + name.replace(' ', '_').replace(',', '_') + ' ' + data);
         }
 
-        public loadData(name: string) {
-            this.webSocket.send('<' + name.replace(' ', '_'));
+        public loadData(name: string, realmNumber: number = -1) {
+            let text = '<';
+            if (realmNumber != -1) {
+                text += realmNumber + ',';
+            }
+            text += name.replace(' ', '_').replace(',', '_');
+            this.webSocket.send(text);
         }
 
         public disconnect() {
