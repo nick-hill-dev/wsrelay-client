@@ -18,7 +18,7 @@
 
         handleMessage?(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, message: string): void;
 
-        handleData?(client: WebSocketRelayClient, name: string, data: string): void;
+        handleData?(client: WebSocketRelayClient, realmNumber: number, name: string, data: string): void;
 
     }
 

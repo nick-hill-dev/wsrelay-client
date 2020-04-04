@@ -6,6 +6,10 @@
 
         public handler: IChannelHandler = null;
 
+        public userNumber: number = -1;
+
+        public realmNumber: number = -1;
+
         public constructor(address: string, protocol: string, handler: IChannelHandler) {
             this.handler = handler;
             this.webSocket = new WebSocket(address, protocol);
@@ -87,33 +91,35 @@
         }
 
         private handleSocketMessage = (e: MessageEvent) => {
-            var line = <string>e.data;
+            let line = <string>e.data;
             if (line.length == 0) return;
             console.log('[WebSocket:Message] ' + line);
-            var spaceIndex = line.indexOf(' ');
-            var protocolPart = spaceIndex >= 0 ? line.substring(0, spaceIndex) : line;
-            var symbol = protocolPart.length > 0 ? protocolPart[0] : '';
-            var messagePart = spaceIndex >= 0 ? line.substring(spaceIndex + 1) : '';
+            let spaceIndex = line.indexOf(' ');
+            let protocolPart = spaceIndex >= 0 ? line.substring(0, spaceIndex) : line;
+            let symbol = protocolPart.length > 0 ? protocolPart[0] : '';
+            let messagePart = spaceIndex >= 0 ? line.substring(spaceIndex + 1) : '';
             switch (symbol) {
 
                 case '#':
+                    this.userNumber = parseInt(protocolPart.substring(1));
                     if (this.handler.assignUserNumber !== undefined) {
-                        this.handler.assignUserNumber(this, parseInt(protocolPart.substring(1)));
+                        this.handler.assignUserNumber(this, this.userNumber);
                     }
                     break;
 
                 case '^':
                 case '&':
+                    this.realmNumber = parseInt(protocolPart.substring(1));
                     if (this.handler.assignRealmNumber !== undefined) {
-                        this.handler.assignRealmNumber(this, parseInt(protocolPart.substring(1)));
+                        this.handler.assignRealmNumber(this, this.realmNumber);
                     }
                     break;
 
                 case '=':
                     if (this.handler.usersJoined !== undefined) {
                         if (protocolPart.length > 1) {
-                            var userNumbers: Array<number> = [];
-                            for (var userNumberString of protocolPart.substring(1).split(',')) {
+                            let userNumbers: Array<number> = [];
+                            for (let userNumberString of protocolPart.substring(1).split(',')) {
                                 userNumbers.push(parseInt(userNumberString));
                             }
                             this.handler.usersJoined(this, userNumbers, true);
@@ -165,8 +171,14 @@
 
                 case '<':
                     if (this.handler.handleData !== undefined) {
-                        var name = protocolPart.substring(1);
-                        this.handler.handleData(this, name, messagePart);
+                        let realmNumber = this.realmNumber;
+                        let name = protocolPart.substring(1);
+                        let index = name.indexOf(',');
+                        if (index != -1) {
+                            realmNumber = parseInt(name.substring(0, index));
+                            name = name.substring(index + 1);
+                        }
+                        this.handler.handleData(this, realmNumber, name, messagePart);
                     }
                     break;
             }

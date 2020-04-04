@@ -25,7 +25,7 @@
             }
         }
 
-        abstract handleData?(client: WebSocketRelayClient, name: string, data: string): void;
+        abstract handleData?(client: WebSocketRelayClient, realmNumber: number, name: string, data: string): void;
 
         public static encode(...parts: Object[]): string {
             var result = '';
