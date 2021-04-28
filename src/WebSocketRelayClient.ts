@@ -51,8 +51,12 @@
             this.webSocket.send(':' + realmNumber + ' ' + message);
         }
 
-        public saveData(name: string, data: string) {
-            this.webSocket.send('>' + name.replace(' ', '_').replace(',', '_') + ' ' + data);
+        public saveData(name: string, data: string, duration: number = 0) {
+            let protocol = '>' + name.replace(' ', '_').replace(',', '_');
+            if (duration > 0) {
+                protocol += ',' + duration;
+            }
+            this.webSocket.send(protocol + ' ' + data);
         }
 
         public loadData(name: string, realmNumber: number = -1) {
