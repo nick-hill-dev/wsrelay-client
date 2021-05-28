@@ -68,6 +68,10 @@
             this.webSocket.send(text);
         }
 
+        public sendCommand(command: string) {
+            this.webSocket.send('$' + command);
+        }
+
         public disconnect() {
             if (this.webSocket !== null) {
                 this.webSocket.close();
