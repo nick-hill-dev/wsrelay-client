@@ -10,7 +10,12 @@
 
         public realmNumber: number = -1;
 
-        public constructor(address: string, protocol: string, handler: IChannelHandler) {
+        public constructor(
+            address: string,
+            protocol: string,
+            handler: IChannelHandler,
+            private readonly log: LogType = LogType.none
+        ) {
             this.handler = handler;
             this.webSocket = new WebSocket(address, protocol);
             this.webSocket.onopen = this.handleSocketOpen;
@@ -36,22 +41,37 @@
         }
 
         public sendToUser(userNumber: number, message: string) {
+            if (this.log) {
+                console.log('[WebSocket:Out] @' + userNumber + ' ' + message);
+            }
             this.webSocket.send('@' + userNumber + ' ' + message);
         }
 
         public sendToAllExceptMe(message: string) {
+            if (this.log) {
+                console.log('[WebSocket:Out] !' + message);
+            }
             this.webSocket.send('! ' + message);
         }
 
         public sendToAll(message: string) {
+            if (this.log) {
+                console.log('[WebSocket:Out] *' + message);
+            }
             this.webSocket.send('* ' + message);
         }
 
         public sendToRealm(realmNumber: number, message: string) {
+            if (this.log) {
+                console.log('[WebSocket:Out] :' + realmNumber + ' ' + message);
+            }
             this.webSocket.send(':' + realmNumber + ' ' + message);
         }
 
         public saveData(name: string, data: string, duration: number = 0) {
+            if (this.log) {
+                console.log('[WebSocket:Out] >' + name + ' ' + data);
+            }
             let protocol = '>' + name.replace(' ', '_').replace(',', '_');
             if (duration > 0) {
                 protocol += ',' + duration;
@@ -60,6 +80,9 @@
         }
 
         public loadData(name: string, realmNumber: number = -1) {
+            if (this.log) {
+                console.log('[WebSocket:Out] <' + name);
+            }
             let text = '<';
             if (realmNumber != -1) {
                 text += realmNumber + ',';
@@ -80,12 +103,16 @@
         }
 
         private handleSocketOpen = (e: Event) => {
-            console.log('[WebSocket:Open]');
+            if (this.log) {
+                console.log('[WebSocket:Open]');
+            }
             this.handler.channelStatus(this, ChannelStatus.online);
         }
 
         private handleSocketClose = (e: CloseEvent) => {
-            console.groupCollapsed('[WebSocket:Close] ' + e.code + ': "' + e.reason + '"');
+            if (this.log) {
+                console.groupCollapsed('[WebSocket:Close] ' + e.code + ': "' + e.reason + '"');
+            }
             console.dir(e);
             console.groupEnd();
             this.handler.channelStatus(this, ChannelStatus.offline);
@@ -93,15 +120,21 @@
         }
 
         private handleSocketError = (e: Event) => {
-            console.groupCollapsed('[WebSocket:Error]');
+            if (this.log) {
+                console.groupCollapsed('[WebSocket:Error]');
+            }
             console.dir(e);
             console.groupEnd();
         }
 
         private handleSocketMessage = (e: MessageEvent) => {
             let line = <string>e.data;
-            if (line.length == 0) return;
-            console.log('[WebSocket:Message] ' + line);
+            if (line.length == 0) {
+                return;
+            }
+            if (this.log) {
+                console.log('[WebSocket:In] ' + line);
+            }
             let spaceIndex = line.indexOf(' ');
             let protocolPart = spaceIndex >= 0 ? line.substring(0, spaceIndex) : line;
             let symbol = protocolPart.length > 0 ? protocolPart[0] : '';
