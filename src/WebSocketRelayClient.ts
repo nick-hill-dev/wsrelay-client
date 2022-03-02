@@ -158,13 +158,13 @@
 
                 case '=':
                     if (this.handler.usersJoined !== undefined) {
+                        let userNumbers: number[] = [];
                         if (protocolPart.length > 1) {
-                            let userNumbers: Array<number> = [];
                             for (let userNumberString of protocolPart.substring(1).split(',')) {
                                 userNumbers.push(parseInt(userNumberString));
                             }
-                            this.handler.usersJoined(this, userNumbers, true);
                         }
+                        this.handler.usersJoined(this, userNumbers, true);
                     }
                     break;
 
