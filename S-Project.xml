@@ -1,4 +1,5 @@
 <project>
+  <name>WSRelayClient</name>
   <packageSources>
     <packageSource>
       <name>Hill</name>
