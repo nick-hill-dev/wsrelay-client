@@ -1,6 +1,6 @@
 ﻿module WSRelayClient {
 
-    export class WebSocketRelayClient {
+    export class WebSocketRelayClient implements IWebSocketRelayClient {
 
         private webSocket: WebSocket = null;
 
