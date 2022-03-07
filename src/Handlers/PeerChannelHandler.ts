@@ -10,9 +10,11 @@ module WSRelayClient {
 
         private userNumbers: number[] = [];
 
+        private childRealmNumbers: number[] = [];
+
         private negotiationComplete: boolean = false;
 
-        public constructor(private readonly realmNumber: number) {
+        public constructor(private readonly options: RealmOptions) {
         }
 
         public getNextFrame(): ChannelFrame {
@@ -21,22 +23,23 @@ module WSRelayClient {
 
         public channelStatus(client: WebSocketRelayClient, status: ChannelStatus) {
             if (status == ChannelStatus.online) {
-                client.joinRealm(this.realmNumber, WSRelayClient.RealmType.realm);
+                client.joinRealm(this.options.realmNumber, WSRelayClient.RealmType.realm);
             } else {
                 this.queueFrame(ChannelFrameType.offline);
             }
         }
 
-        public assignUserNumber?(client: WebSocketRelayClient, userNumber: number) {
+        public assignUserNumber(client: WebSocketRelayClient, userNumber: number) {
             this.userNumbers.push(userNumber);
             this.myUserNumber = userNumber;
         }
 
-        public assignRealmNumber?(client: WebSocketRelayClient, realmNumber: number) {
+        public assignRealmNumber(client: WebSocketRelayClient, realmNumber: number) {
         }
 
-        public usersJoined?(client: WebSocketRelayClient, userNumbers: number[], joinedBeforeYou: boolean) {
+        public usersJoined(client: WebSocketRelayClient, userNumbers: number[], joinedBeforeYou: boolean) {
 
+            // At this point we also have a complete picture of all existing child realms
             if (joinedBeforeYou) {
                 if (userNumbers.length < 2) {
                     this.hostUserNumber = userNumbers.length == 0 ? this.myUserNumber : userNumbers[0];
@@ -46,6 +49,7 @@ module WSRelayClient {
                 } else {
                     client.sendToAllExceptMe('WHO_IS_HOST');
                 }
+
             }
 
             this.queueFrame(ChannelFrameType.join, this.myUserNumber);
@@ -55,7 +59,7 @@ module WSRelayClient {
             }
         }
 
-        public userLeft?(client: WebSocketRelayClient, userNumber: number) {
+        public userLeft(client: WebSocketRelayClient, userNumber: number) {
             this.userNumbers.splice(this.userNumbers.indexOf(userNumber), 1);
             this.queueFrame(ChannelFrameType.leave, userNumber);
             if (userNumber == this.hostUserNumber) {
@@ -64,10 +68,12 @@ module WSRelayClient {
             }
         }
 
-        public childRealmCreated?(client: WebSocketRelayClient, realmNumber: number) {
+        public childRealmCreated(client: WebSocketRelayClient, realmNumber: number) {
+            this.childRealmNumbers.push(realmNumber);
         }
 
-        public childRealmDestroyed?(client: WebSocketRelayClient, realmNumber: number) {
+        public childRealmDestroyed(client: WebSocketRelayClient, realmNumber: number) {
+            this.childRealmNumbers.splice(this.childRealmNumbers.indexOf(realmNumber), 1);
         }
 
         public handleMessage(client: WebSocketRelayClient, senderUserNumber: number, target: MessageTarget, message: string) {
@@ -96,7 +102,7 @@ module WSRelayClient {
             }
         }
 
-        public handleData?(client: WebSocketRelayClient, realmNumber: number, name: string, data: string) {
+        public handleData(client: WebSocketRelayClient, realmNumber: number, name: string, data: string) {
         }
 
         private queueFrame(type: ChannelFrameType, id: number = -1, command: string = null, parameters: string[] = null) {
