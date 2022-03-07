@@ -2,7 +2,7 @@ module WSRelayClient {
 
     export class ChildRealmOptions {
 
-        public constructor(public readonly capacity: boolean) {
+        public constructor(public readonly capacity: number) {
         }
 
     }
