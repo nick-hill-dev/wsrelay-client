@@ -1,0 +1,23 @@
+{
+  "name": "WSRelayClient",
+  "packageSources": [
+    {
+      "name": "Hill",
+      "type": "remote",
+      "location": "https://nickhill.dyndns.org/files/PackageManager"
+    }
+  ],
+  "packagePublishing": {
+    "application": "TS",
+    "name": "Javascript.WSRelayClient",
+    "version": "1.1",
+    "files": [
+      {
+        "path": "src"
+      },
+      {
+        "path": "tsconfig.json"
+      }
+    ]
+  }
+}
