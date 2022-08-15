@@ -6,7 +6,7 @@
     "noUnusedLocals": true,
     "module": "system",
     "removeComments": false,
-    "sourceRoot": "./src/",
+    "sourceRoot": "../src/",
     "rootDir": "./src/",
     "outDir": "./bin/",
     "outFile": "./bin/wsRelayClient.js",
