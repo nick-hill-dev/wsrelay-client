@@ -123,6 +123,9 @@ module WSRelayClient {
         }
 
         public handleData(client: WebSocketRelayClient, realmNumber: number, name: string, data: string) {
+            if (this.completedAllNegotiation) {
+                this.queueFrame(ChannelFrameType.data, -1, name, [data]);
+            }
         }
 
         private beginDetermineRealm(client: WebSocketRelayClient) {
@@ -165,7 +168,6 @@ module WSRelayClient {
             this.queueFrame(ChannelFrameType.negotiated);
             this.completedAllNegotiation = true;
         }
-
 
         private queueFrame(type: ChannelFrameType, id: number = -1, command: string = null, parameters: string[] = null) {
             this.frames.push(new ChannelFrame(type, id, command, parameters));
