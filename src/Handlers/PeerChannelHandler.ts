@@ -21,6 +21,10 @@ module WSRelayClient {
         public constructor(private readonly options: RealmOptions) {
         }
 
+        public amIHost(): boolean {
+            return this.myUserNumber !== -1 && this.myUserNumber === this.hostUserNumber;
+        }
+
         public getNextFrame(): ChannelFrame {
             return this.frames.length == 0 ? null : this.frames.shift();
         }
