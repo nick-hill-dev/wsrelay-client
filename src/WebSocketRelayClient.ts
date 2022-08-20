@@ -112,9 +112,9 @@
         private handleSocketClose = (e: CloseEvent) => {
             if (this.log) {
                 console.groupCollapsed('[WebSocket:Close] ' + e.code + ': "' + e.reason + '"');
+                console.dir(e);
+                console.groupEnd();
             }
-            console.dir(e);
-            console.groupEnd();
             this.handler.channelStatus(this, ChannelStatus.offline);
             this.webSocket = null;
         }
@@ -122,9 +122,9 @@
         private handleSocketError = (e: Event) => {
             if (this.log) {
                 console.groupCollapsed('[WebSocket:Error]');
+                console.dir(e);
+                console.groupEnd();
             }
-            console.dir(e);
-            console.groupEnd();
         }
 
         private handleSocketMessage = (e: MessageEvent) => {
