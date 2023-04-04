@@ -2,6 +2,11 @@ module WSRelayClient {
 
     export class Command {
 
+        /**
+         * Converts a list of strings/objects into a single string which can be sent to other users via a WebSocket Relay server.
+         * @param parts A number of strings/objects which will be encoded as a single string.
+         * @returns The encoded string containing all of the specified values.
+         */
         public static encode(...parts: Object[]): string {
             let result = '';
             let first = true;
@@ -22,6 +27,11 @@ module WSRelayClient {
             return result;
         }
 
+        /**
+         * Converts a string that was previously encoded via `encode()` into the original list of strings.
+         * @param line The line to convert into a list of strings.
+         * @returns The decoded list of strings that was previously encoded via `encode()`, by this machine or another user.
+         */
         public static decode(line: string): string[] {
 
             // A blank line contains no data at all

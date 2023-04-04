@@ -1,5 +1,14 @@
 module WSRelayClient {
 
+    /**
+     * An experimental peer to peer channel handler client for the WebSocket Relay server.
+     * A `PeerChannelHandler` might be useful for frame-based multiplayer games with self-organizing host management, where a single
+     * user is designated as the host for a realm and handles all of the commands without need for a centralized server.
+     * The host is automatically managed and the handler is able to automatically handle when users join and leave, even if the host leaves.
+     * That said, this is an experimental class which has not been thoroughly proven yet.
+     * Regularly call 'getNextFrame' to gather a list of unprocessed messages, for processing. This is the primary mechanism for determining what has
+     * happened and what needs to be processed.
+     */
     export class PeerChannelHandler implements IChannelHandler {
 
         public hostUserNumber: number = -1;

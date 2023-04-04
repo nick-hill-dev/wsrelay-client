@@ -1,5 +1,9 @@
 ﻿module WSRelayClient {
 
+    /**
+     * A WebSocket Relay client that does not actually communicate with a WebSocket Relay server.
+     * Useful for testing and debugging purposes without requiring an actual connection to the server.
+     */
     export class OfflineWebSocketRelayClient implements IWebSocketRelayClient {
 
         public readonly userNumber: number = 1;
@@ -8,6 +12,10 @@
 
         private data: Array<{ realm: number; name: string; value: string }> = [];
 
+        /**
+         * @param handler The channel handler you wish to use for this client.
+         * @param options Various options for configuring the offline server.
+         */
         public constructor(public readonly handler: IChannelHandler, private readonly options: OfflineOptions) {
             if (this.options.saveDataToLocalStorage) {
                 let jsonString = localStorage.getItem('webSocketRelayClientData');

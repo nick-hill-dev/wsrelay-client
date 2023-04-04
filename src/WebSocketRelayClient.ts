@@ -1,5 +1,9 @@
 ﻿module WSRelayClient {
 
+    /**
+     * A standard implementation of `IWebSocketRelayClient` for communicating with a WebSocket Relay server
+     * and handling communications from a WebSocket relay server.
+     */
     export class WebSocketRelayClient implements IWebSocketRelayClient {
 
         private webSocket: WebSocket = null;
@@ -10,6 +14,12 @@
 
         public realmNumber: number = -1;
 
+        /**
+         * @param address The address to connect to, for example ws://127.0.0.1 or wss:/127.0.0.1. Can also include a port number.
+         * @param protocol The protocol to use, which is part of the websocket specification, and it must be accepted by the WebSocket Relay server.
+         * @param handler The channel handler to use when handling messages sent by the WebSocket Relay server.
+         * @param log Indicates what messages to automatically log as a result of sending and/or receiving messages between the client and the server.
+         */
         public constructor(
             address: string,
             protocol: string,
