@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title>WebSocket Relay Client Demo</title>
+    <script src="../bin/wsRelayClient.js"></script>
+</head>
+
+<body>
+    <style>
+        p,
+        button {
+            font-family: Consolas;
+            font-size: 12t;
+            color: blue;
+            line-height: 0;
+        }
+
+        button {
+            height: 20pt;
+        }
+    </style>
+    <script>
+
+        /**
+         * This class implements IChannelHandler and makes it easy to process messages and events triggered by ourselves or by users on different computers.
+         */
+        class DemoHandler /*implements WSRelayClient.IChannelHandler*/ {
+
+            channelStatus(client, status) {
+                log(`Channel status is ${status}`);
+                document.getElementById('connectButton').disabled = status == 0;
+                document.getElementById('disconnectButton').disabled = status != 0;
+                document.getElementById('connectedPanel').style.display = status != 1 ? 'inline' : 'none';
+                if (status == 0) {
+                    document.createElement('input');
+                }
+            }
+
+            assignUserNumber(client, userNumber) {
+                log(`You have been assigned user number ${userNumber}`);
+                client.joinRealm(9999); // When we are told our user number, join realm #9999
+            }
+
+            assignRealmNumber(client, realmNumber) {
+                log(`You have been assigned realm number ${realmNumber}`);
+            }
+
+            usersJoined(client, userNumbers, joinedBeforeYou) {
+                for (let userNumber of userNumbers) {
+                    log(`User joined: ${userNumber}`);
+                }
+            }
+
+            userLeft(client, userNumber) {
+                log(`User left: ${userNumber}`);
+            }
+
+            childRealmCreated(client, realmNumber) {
+                log(`Child realm created: ${realmNumber}`);
+            }
+
+            childRealmDestroyed(client, realmNumber) {
+                log(`Child realm destroyed: ${realmNumber}`);
+            }
+
+            handleMessage(client, senderUserNumber, target, message) {
+                log(`Message received: [${senderUserNumber}:${target}] ${message}`);
+            }
+
+            handleData(client, realmNumber, name, data) {
+                log(`Data received: [${realmNumber}:${name}] ${data}`);
+            }
+
+        }
+
+        var client;
+
+        function connect() {
+            let address = document.getElementById('addressTextBox').value;
+            let protocol = document.getElementById('protocolTextBox').value;
+            let demoHandler = new DemoHandler();
+            log(`Connecting to ${address}, protocol ${protocol}`);
+            document.getElementById('connectButton').disabled = true;
+            client = new WSRelayClient.WebSocketRelayClient(address, protocol, demoHandler);
+        }
+
+        function sendToAll() {
+            let message = document.getElementById('messageTextBox').value;
+            client.sendToAll(message); // Can also sendToAllExceptMe() and sendToUser()...etc.
+        }
+
+        function log(text) {
+            let p = document.createElement('p');
+            p.textContent = text;
+            document.body.appendChild(p);
+        }
+
+        function disconnect() {
+            client.disconnect();
+        }
+    </script>
+
+    <input type="text" id="addressTextBox" value="ws://localhost:22002" />
+    <input type="text" id="protocolTextBox" value="demo" />
+    <button id="connectButton" onclick="connect()">Connect</button>
+    <button id="disconnectButton" disabled="disabled" onclick="disconnect()">Disconnect</button>
+    <br />
+    <div id="connectedPanel" style="display: none;">
+        <input type="text" id="messageTextBox" value="Hello world!" />
+        <button id="sendToAllButton" onclick="sendToAll()">Send</button>
+    </div>
+</body>
+
+</html>
