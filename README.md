@@ -2,7 +2,7 @@
 
 The WebSocket Relay client is a Javascript library that simplifies the process of communicating with a WebSocket Relay server and makes it easy to create an internet communications application where users of different web browsers and/or different computers can seamlessly communicate with one another via the relay server, providing the illusion that they are in fact connected to each other.
 
-Web pages that make use of a WebSocket Relay server must understand and transmit messages using the [WebSocket Relay protocol](https://github.com/nick-hill-dev/wsrelay-server/PROTOCOL.md). This library simplifies the protocol significantly to the point that all that is needed is to implement the `IChannelHandler` interface and make use of an instance of the `IWebSocketRelayClient` interface (for example, the class `WebSocketRelayClient`).
+Web pages that make use of a WebSocket Relay server must understand and transmit messages using the [WebSocket Relay protocol](https://github.com/nick-hill-dev/wsrelay-server/blob/master/PROTOCOL.md). This library simplifies the protocol significantly to the point that all that is needed is to implement the `IChannelHandler` interface and make use of an instance of the `IWebSocketRelayClient` interface (for example, the class `WebSocketRelayClient`).
 
 Reference the [WebSocket Relay Server](https://github.com/nick-hill-dev/wsrelay-server) repository for an implementation of a WebSocket Relay Server that implements the protocol on the server side.
 
