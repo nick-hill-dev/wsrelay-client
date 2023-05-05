@@ -1,0 +1,21 @@
+{
+  "name": "wsrelay-client",
+  "version": "1.0.0",
+  "description": "A JS/TS library that simplifies two-way communication between a web browser and a WebSocket Relay server, allowing users on different computers to communicate with one another via a web browser.",
+  "bin": {
+    "bitstream": "bin/wsRelayClient.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nick-hill-dev/wsrelay-client.git"
+  },
+  "keywords": [
+    "wsrelay"
+  ],
+  "author": "Nick Hill",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nick-hill-dev/wsrelay-client/issues"
+  },
+  "homepage": "https://github.com/nick-hill-dev/wsrelay-client#readme"
+}
